@@ -78,7 +78,7 @@ public class JdbcMemberRepository implements MemberRepository {
 
 	@Override
 	public Optional<Member> findByName(String name) {
-		String sql = "select * from member where id = ?";
+		String sql = "select * from member where name = ?";
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -138,6 +138,9 @@ public class JdbcMemberRepository implements MemberRepository {
 	private Connection getConnection() {
 		return DataSourceUtils.getConnection(dataSource);
 	}
+	private void close(Connection conn) throws SQLException {
+		DataSourceUtils.releaseConnection(conn, dataSource);
+	}
 
 	private void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
 		try {
@@ -158,7 +161,8 @@ public class JdbcMemberRepository implements MemberRepository {
 
 		try {
 			if(conn != null) {
-				conn.close();
+				// conn.close();
+				close(conn);
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
